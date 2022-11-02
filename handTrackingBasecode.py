@@ -57,21 +57,24 @@ class handDetector():
     
 
 
-def main():
+def main(): # Main program
+
+    # FPS calculating variables
     prevTime = 0
     curTime = 0
 
-    vidcap = cv2.VideoCapture(0)
+    vidcap = cv2.VideoCapture(0) # Video Capture
 
-    detector = handDetector()
+    detector = handDetector() # Creates an object of the class above
 
     while True:
         success, img = vidcap.read()
         img = detector.findHands(img)
-        lmList = detector.findPosition(img)
+        lmList = detector.findPosition(img, draw=False)
         if len(lmList) != 0:
             print(lmList[4])
 
+        # FPS in the corner of the screen
         curTime = time.time()
         fps = 1/(curTime-prevTime)
         prevTime = curTime
