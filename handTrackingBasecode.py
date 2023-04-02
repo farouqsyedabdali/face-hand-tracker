@@ -3,7 +3,7 @@ import mediapipe as mp
 import time
 
 
-class handDetector():
+class HandDetector():
     def __init__(self,
                 mode=False,
                 max_hands=2,
@@ -30,8 +30,10 @@ class handDetector():
         if self.results.multi_hand_landmarks:
             for handLMS in self.results.multi_hand_landmarks:
                 if draw:
-                    self.mpDraw.draw_landmarks(img, handLMS, 
-                                                self.mpHands.HAND_CONNECTIONS)
+                    for id, lm in enumerate(handLMS.landmark):
+                        h, w, c = img.shape
+                        cx, cy = int(lm.x*w), int(lm.y*h)
+                        cv2.circle(img, (cx, cy), 7, (0, 255, 0), cv2.FILLED)
 
         return img
 
@@ -40,22 +42,17 @@ class handDetector():
         lmList = []
 
         if self.results.multi_hand_landmarks:
-            myHand = self.results.multi_hand_landmarks[handNum]
-
-
-            for id, lm in enumerate(myHand.landmark):
-
-                hei, wid, ch = img.shape
-                cx, cy = int(lm.x*wid), int(lm.y*hei)
-                lmList.append([id, cx, cy])
-
-                if draw:
-                    cv2.circle(img, (cx, cy), 10, (0, 0, 255), cv2.FILLED)
+            try:
+                myHand = self.results.multi_hand_landmarks[handNum]
+                for id, lm in enumerate(myHand.landmark):
+                    h, w, c = img.shape
+                    cx, cy = int(lm.x*w), int(lm.y*h)
+                    lmList.append([id, cx, cy])
+            except IndexError:
+                pass
 
         return lmList
-
     
-
 
 def main(): # Main program
 
@@ -65,14 +62,14 @@ def main(): # Main program
 
     vidcap = cv2.VideoCapture(0) # Video Capture
 
-    detector = handDetector() # Creates an object of the class above
+    detector = HandDetector() # Creates an object of the class above
 
     while True:
         success, img = vidcap.read()
         img = detector.findHands(img)
-        lmList = detector.findPosition(img, draw=False)
-        if len(lmList) != 0:
-            print(lmList[4])
+        lm_list = detector.findPosition(img, draw=False)
+        if len(lm_list) != 0:
+            print(lm_list[4])
 
         # FPS in the corner of the screen
         curTime = time.time()
