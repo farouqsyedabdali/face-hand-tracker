@@ -3,7 +3,7 @@ import mediapipe as mp
 import time
 
 
-class HandDetector():
+class HandDetector:
     def __init__(self,
                 mode=False,
                 max_hands=2,
@@ -22,7 +22,7 @@ class HandDetector():
                                         self.detecConfidence, self.trackConfidence)
         self.mpDraw = mp.solutions.drawing_utils
 
-    def findHands(self, img, draw=True):
+    def find_hands(self, img, draw=True):
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.results = self.hands.process(imgRGB)
         #print(results.multi_hand_landmarks)
@@ -37,7 +37,7 @@ class HandDetector():
 
         return img
 
-    def findPosition(self, img, handNum=0, draw=True):
+    def find_position(self, img, handNum=0, draw=True):
 
         lmList = []
 
@@ -57,8 +57,8 @@ class HandDetector():
 def main(): # Main program
 
     # FPS calculating variables
-    prevTime = 0
-    curTime = 0
+    prev_time = 0
+    cur_time = 0
 
     vidcap = cv2.VideoCapture(0) # Video Capture
 
@@ -66,15 +66,15 @@ def main(): # Main program
 
     while True:
         success, img = vidcap.read()
-        img = detector.findHands(img)
-        lm_list = detector.findPosition(img, draw=False)
+        img = detector.find_hands(img)
+        lm_list = detector.find_position(img, draw=False)
         if len(lm_list) != 0:
             print(lm_list[4])
 
         # FPS in the corner of the screen
-        curTime = time.time()
-        fps = 1/(curTime-prevTime)
-        prevTime = curTime
+        cur_time = time.time()
+        fps = 1/(cur_time-prev_time)
+        prev_time = cur_time
 
         cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 
                     3, (0, 0, 255), 2)
