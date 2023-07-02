@@ -1,2 +1,2 @@
-# computer-vision-tests
-exploring different computer vision projects through CV libraries
+# Face and Hand Tracker
+Used cv2 and Mediapipe to create a face and hand detector
